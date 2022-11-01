@@ -17,9 +17,29 @@ export class GithubReposStack extends TerraformStack {
         super(scope, id);
 
         new AWSProviderConfigs(this, 'GithubReposAWSProviderConfigs', props);
-        new github.provider.GithubProvider(this, 'GithubProvider', {
-            owner: props.githubOrg
+        const githubProvider = new github.provider.GithubProvider(this, 'GithubProvider', {
+            owner: props.githubOrg,
         });
+
+        const forgeOrgProject = new github.organizationProject.OrganizationProject(this, 'OrgProjectForge', {
+            name: 'aws-construct-forge',
+            provider: githubProvider
+        })
+
+        new github.projectColumn.ProjectColumn(this, 'TodoColumn', {
+            name: 'Todo',
+            projectId: forgeOrgProject.id,
+        })
+
+        new github.projectColumn.ProjectColumn(this, 'InProgressColumn', {
+            name: 'In Progress',
+            projectId: forgeOrgProject.id
+        })
+
+        new github.projectColumn.ProjectColumn(this, 'DoneColumn', {
+            name: 'Done',
+            projectId: forgeOrgProject.id
+        })
 
         const githubForgeRepo = new github.repository.Repository(this, 'GithubForge', {
             name: 'github-forge',
