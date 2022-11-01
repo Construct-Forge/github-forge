@@ -1,7 +1,7 @@
 name: Release
 on:
   push:
-    branches: [ master, next, beta, alpha, "*.x" ]
+    branches: [ main, next, beta, alpha, "*.x" ]
 jobs:
   release:
     name: Release
@@ -21,4 +21,4 @@ jobs:
       - name: Release
         run: npx semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN_SEMREL }}
+          GITHUB_TOKEN: ${{ secrets.CONSTRUCT_FORGE_GITHUB_TOKEN_SEMREL }}
