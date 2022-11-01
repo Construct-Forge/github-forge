@@ -18,7 +18,7 @@ export class GithubReposStack extends TerraformStack {
 
         new AWSProviderConfigs(this, 'GithubReposAWSProviderConfigs', props);
         new github.provider.GithubProvider(this, 'GithubProvider', {
-            organization: props.githubOrg
+            owner: props.githubOrg
         });
 
         const githubForgeRepo = new github.repository.Repository(this, 'GithubForge', {
@@ -26,9 +26,19 @@ export class GithubReposStack extends TerraformStack {
             description: 'Holds Github Repos and configs for organization'
         })
 
+        const awsConstructForgeRepo = new github.repository.Repository(this, 'AwsConstructForgeRepo', {
+            name: 'construct-forge-aws',
+            description: 'Holds AWS Constructs'
+        })
+
         new TerraformOutput(this, 'GithubForgeRepoOutput', {
             description: 'github-forge-url',
             value: githubForgeRepo.gitCloneUrl
+        })
+
+        new TerraformOutput(this, 'AwsConstructForgeRepoOutput', {
+            description: 'aws-construct-forge-url',
+            value: awsConstructForgeRepo.gitCloneUrl
         })
     }
 }
