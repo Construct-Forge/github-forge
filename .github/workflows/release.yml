@@ -1,0 +1,24 @@
+name: Release
+on:
+  push:
+    branches: [ master, next, beta, alpha, "*.x" ]
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          # Make sure `semantic-release/git` step uses its own credentials.
+          persist-credentials: false
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 'lts/gallium'
+      - name: Install dependencies
+        run: npm ci
+      - name: Release
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN_SEMREL }}
