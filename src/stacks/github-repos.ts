@@ -17,29 +17,9 @@ export class GithubReposStack extends TerraformStack {
         super(scope, id);
 
         new AWSProviderConfigs(this, 'GithubReposAWSProviderConfigs', props);
-        const githubProvider = new github.provider.GithubProvider(this, 'GithubProvider', {
+        new github.provider.GithubProvider(this, 'GithubProvider', {
             owner: props.githubOrg,
         });
-
-        const forgeOrgProject = new github.organizationProject.OrganizationProject(this, 'OrgProjectForge', {
-            name: 'aws-construct-forge',
-            provider: githubProvider
-        })
-
-        new github.projectColumn.ProjectColumn(this, 'TodoColumn', {
-            name: 'Todo',
-            projectId: forgeOrgProject.id,
-        })
-
-        new github.projectColumn.ProjectColumn(this, 'InProgressColumn', {
-            name: 'In Progress',
-            projectId: forgeOrgProject.id
-        })
-
-        new github.projectColumn.ProjectColumn(this, 'DoneColumn', {
-            name: 'Done',
-            projectId: forgeOrgProject.id
-        })
 
         const githubForgeRepo = new github.repository.Repository(this, 'GithubForge', {
             name: 'github-forge',
@@ -51,6 +31,11 @@ export class GithubReposStack extends TerraformStack {
             description: 'Holds AWS Constructs'
         })
 
+        const practiceForgeRepo = new github.repository.Repository(this, 'PracticeForgeRepo', {
+            name: 'practice-forge',
+            description: 'Holds practice stacks that import construct forge constructs'
+        })
+
         new TerraformOutput(this, 'GithubForgeRepoOutput', {
             description: 'github-forge-url',
             value: githubForgeRepo.gitCloneUrl
@@ -59,6 +44,11 @@ export class GithubReposStack extends TerraformStack {
         new TerraformOutput(this, 'AwsConstructForgeRepoOutput', {
             description: 'aws-construct-forge-url',
             value: awsConstructForgeRepo.gitCloneUrl
+        })
+
+        new TerraformOutput(this, 'PracticeForgeRepoOutput', {
+            description: 'practice-forge-url',
+            value: practiceForgeRepo.gitCloneUrl
         })
     }
 }
